@@ -33,7 +33,7 @@ const App: React.FC = () => {
       playerVars: {
         autoplay: 0,
         controls: 0,
-        modestbranding: 1,
+        modestbranding: 0,
         rel: 0,
         iv_load_policy: 3,
         fs: 0,
