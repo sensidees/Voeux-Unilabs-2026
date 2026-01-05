@@ -88,14 +88,14 @@ const App: React.FC = () => {
       {/* Header & Logo - Tentative intelligente de chemin public/ vs racine */}
       <header className="pt-12 pb-10 md:pt-24 md:pb-20 flex justify-center w-full animate-premium-entry">
         <img 
-          src="/public/Logo-Unilabs.png" 
+          src="/public/logo-unilabs.png" 
           alt="Unilabs" 
           className="w-48 md:w-64 h-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.15)]"
           onError={(e) => {
             const target = e.currentTarget;
             // Si /public/ échoue (ex: déploiement racine sur Vercel), on tente /
             if (target.src.includes('/public/')) {
-              target.src = "/Logo-Unilabs.png";
+              target.src = "/logo-unilabs.png";
             } else {
               target.style.opacity = '0';
               console.warn("Logo non trouvé. Vérifiez le dossier /public/ ou la racine.");
