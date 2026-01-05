@@ -137,7 +137,7 @@ const App: React.FC = () => {
 
       <footer className="mt-auto py-12 animate-fade-in">
         <p className="text-[9px] text-gray-500 tracking-[0.8em] uppercase font-medium">
-          Unilabs Diagnostics &bull; 2026
+          Unilabs &bull; 2026
         </p>
       </footer>
 
