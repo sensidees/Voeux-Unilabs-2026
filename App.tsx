@@ -96,7 +96,7 @@ const App: React.FC = () => {
         <div className="relative aspect-video bg-[#050505] rounded-xl overflow-hidden shadow-[0_0_80px_rgba(255,255,255,0.05)] border border-white/5">
           
           {/* LE CROP : Scale 1.25 avec origin-center */}
-          <div className="absolute inset-0 w-full h-full scale-[1.28] origin-center pointer-events-none">
+          <div className="absolute inset-0 w-full h-full scale-[1] origin-center pointer-events-none">
             <div id="youtube-player" className="w-full h-full"></div>
           </div>
 
