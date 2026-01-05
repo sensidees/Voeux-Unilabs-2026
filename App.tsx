@@ -25,6 +25,7 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Chargement robuste de l'API
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
@@ -47,7 +48,6 @@ const App: React.FC = () => {
           iv_load_policy: 3,
           fs: 0,
           disablekb: 1,
-          showinfo: 0, // Bien que déprécié, on le garde en résiduel
         },
         events: {
           onStateChange: onPlayerStateChange,
@@ -75,21 +75,16 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-black flex flex-col items-center overflow-hidden font-sans">
       
-      {/* Header & Logo - Système de Fallback de Casse */}
+      {/* Header & Logo - Chemin direct */}
       <header className="pt-12 pb-10 md:pt-20 md:pb-16 flex justify-center w-full animate-fade-in">
         <img 
           src="/logo-unilabs.png" 
           alt="Unilabs" 
           className="w-48 md:w-64 h-auto object-contain drop-shadow-2xl"
           onError={(e) => {
-            const img = e.currentTarget;
-            // Si /Logo-Unilabs.png (Maj) échoue, on tente /logo-unilabs.png (Min)
-            if (img.src.includes('logo-unilabs.png')) {
-              img.src = '/logo-unilabs.png';
-            } else {
-              // Si tout échoue, logo officiel distant pour le branding
-              img.src = 'https://unilabs.fr/themes/unilabs/images/logo-unilabs.svg';
-            }
+            // Fallback unique vers le SVG officiel si le PNG local échoue (évite la boucle)
+            e.currentTarget.onerror = null; 
+            e.currentTarget.src = 'https://unilabs.fr/themes/unilabs/images/logo-unilabs.svg';
           }}
         />
       </header>
@@ -98,20 +93,20 @@ const App: React.FC = () => {
       <main className="w-full max-w-[1000px] px-4 md:px-0 opacity-0 animate-fade-in [animation-delay:400ms] [animation-fill-mode:forwards]">
         <div className="relative aspect-video bg-[#050505] rounded-xl overflow-hidden shadow-[0_0_80px_rgba(255,255,255,0.05)] border border-white/5">
           
-          {/* ZOOM AGRESSIF (1.25) pour masquer la photo de profil en haut à gauche */}
-          <div className="absolute inset-0 w-full h-full scale-[1.25] origin-center pointer-events-none">
+          {/* LE CROP : Scale 1.3 avec origin-top pour masquer le bandeau supérieur YouTube */}
+          <div className="absolute inset-0 w-full h-full scale-[1.3] origin-top pointer-events-none">
             <div id="youtube-player" className="w-full h-full"></div>
           </div>
 
-          {/* BOUCLIER ANTI-HOVER : Empêche YouTube de détecter la souris */}
+          {/* BOUCLIER : Bloque les interactions directes avec l'iframe */}
           <div className="absolute inset-0 z-10 w-full h-full bg-transparent"></div>
 
-          {/* BOUTONS (z-20 pour être au-dessus du bouclier) */}
+          {/* OVERLAY DE DÉPART */}
           {!isPlaying && !isEnded && (
             <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 backdrop-blur-[2px] transition-all duration-1000">
               <button
                 onClick={handleStart}
-                className="group relative flex items-center justify-center w-24 h-24 rounded-full bg-white text-black transition-all duration-500 hover:scale-105 shadow-2xl"
+                className="group relative flex items-center justify-center w-24 h-24 rounded-full bg-white text-black transition-all duration-500 hover:scale-110 active:scale-95 shadow-2xl"
               >
                 <div className="absolute inset-0 rounded-full border border-white/50 group-hover:animate-ping opacity-50"></div>
                 <svg className="w-10 h-10 ml-1.5" fill="currentColor" viewBox="0 0 24 24">
@@ -121,15 +116,16 @@ const App: React.FC = () => {
             </div>
           )}
 
+          {/* OVERLAY DE FIN */}
           {isEnded && (
             <div className="absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/90 animate-fade-in">
               <button onClick={handleReplay} className="group flex flex-col items-center gap-5">
-                <div className="w-16 h-16 flex items-center justify-center border border-white/10 rounded-full group-hover:bg-white/5">
+                <div className="w-16 h-16 flex items-center justify-center border border-white/10 rounded-full group-hover:bg-white/5 transition-colors">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
                   </svg>
                 </div>
-                <span className="text-[9px] font-bold tracking-[0.6em] uppercase text-white/40 group-hover:text-white transition-colors">Revoir les vœux</span>
+                <span className="text-[9px] font-bold tracking-[0.6em] uppercase text-white/40 group-hover:text-white">Revoir les vœux</span>
               </button>
             </div>
           )}
