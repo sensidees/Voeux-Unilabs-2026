@@ -16,7 +16,7 @@ const App: React.FC = () => {
   const playerRef = useRef<any>(null);
 
   const onPlayerStateChange = useCallback((event: any) => {
-    // YT.PlayerState: 0 (ENDED), 1 (PLAYING), 2 (PAUSED)
+    // 0: Ended, 1: Playing, 2: Paused
     if (event.data === 0) {
       setIsEnded(true);
       setIsPlaying(false);
@@ -29,7 +29,6 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Chargement différé de l'API YouTube
     if (!window.YT) {
       const tag = document.createElement('script');
       tag.src = "https://www.youtube.com/iframe_api";
@@ -81,30 +80,35 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-black flex flex-col items-center overflow-hidden font-sans">
       
-      {/* Header & Logo - Uniquement Logo-Unilabs.png */}
+      {/* Logo pointant explicitement vers le dossier public */}
       <header className="pt-12 pb-10 md:pt-20 md:pb-16 flex justify-center w-full animate-fade-in">
         <img 
-          src="/Logo-Unilabs.png" 
+          src="public/Logo-Unilabs.png" 
           alt="Unilabs" 
           className="w-48 md:w-64 h-auto object-contain drop-shadow-2xl"
+          onError={(e) => {
+            // Si le chemin public/ échoue (car Vercel redirige déjà), on tente à la racine
+            const target = e.currentTarget;
+            if (target.src.includes('public/')) {
+              target.src = "/Logo-Unilabs.png";
+            }
+          }}
         />
       </header>
 
-      {/* Main Video Section */}
+      {/* Section Vidéo */}
       <main className="w-full max-w-[1100px] px-4 md:px-0 opacity-0 animate-fade-in [animation-delay:400ms] [animation-fill-mode:forwards]">
         <div className="relative aspect-video bg-[#050505] rounded-xl overflow-hidden shadow-[0_0_100px_rgba(255,255,255,0.05)] border border-white/5">
           
-          {/* THE CINEMATIC CROP : Zoom calculé pour masquer le titre YouTube */}
           <div className="absolute inset-0 w-full h-full scale-[1.16] origin-center">
             <div id="youtube-player" className="w-full h-full pointer-events-none"></div>
           </div>
 
-          {/* Start Overlay Custom */}
           {!isPlaying && !isEnded && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 backdrop-blur-[2px] transition-all duration-1000">
               <button
                 onClick={handleStart}
-                aria-label="Play video"
+                aria-label="Lancer"
                 className="group relative flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-full bg-white text-black transition-all duration-500 hover:scale-110 active:scale-95 shadow-[0_0_50px_rgba(255,255,255,0.2)]"
               >
                 <div className="absolute inset-0 rounded-full border-2 border-white/30 group-hover:animate-ping"></div>
@@ -115,13 +119,12 @@ const App: React.FC = () => {
             </div>
           )}
 
-          {/* End Overlay Replay (Hides suggestions) */}
           {isEnded && (
             <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black animate-in fade-in duration-1000">
               <button 
                 onClick={handleReplay} 
                 className="group flex flex-col items-center gap-6"
-                aria-label="Replay video"
+                aria-label="Revoir"
               >
                 <div className="w-16 h-16 md:w-20 md:h-20 flex items-center justify-center border border-white/10 rounded-full group-hover:border-white group-hover:bg-white/5 transition-all duration-500 shadow-xl">
                   <svg className="w-8 h-8 md:w-10 md:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1">
@@ -135,7 +138,7 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Footer Minimaliste */}
+      {/* Footer */}
       <footer className="mt-auto py-12 opacity-0 animate-fade-in [animation-delay:800ms] [animation-fill-mode:forwards]">
         <p className="text-[10px] text-gray-500 tracking-[0.6em] uppercase font-bold select-none">
           Unilabs 2026
