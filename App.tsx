@@ -7,7 +7,7 @@ declare global {
   }
 }
 
-const VIDEO_ID = 'ER-qkekcKb8';
+const VIDEO_ID = 'LdqUvcMYn8o';
 
 const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
